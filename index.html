@@ -10,8 +10,8 @@
   <h1>Transfer Details</h1>
   <form id="transferForm">
     <div>
-      <label for="positionCode">Position Code:</label>
-      <input type="text" id="positionCode" name="positionCode" maxlength="7" required>
+      <label for="yourBDECode">Your BDE Code:</label>
+      <input type="text" id="yourBDECode" name="yourBDECode" maxlength="7">
     </div>
     <div>
       <label for="phoneNumber">Phone Number:</label>
@@ -28,97 +28,91 @@
         <!-- Add more options if needed -->
       </select>
     </div>
-    <form action="https://api.web3forms.com/submit" method="POST">
-     <input type="hidden" name="access_key" value="7115a9fd-be47-4d9b-9f16-74388807b301">
-        
     <button type="submit">Submit</button>
-
   </form>
 
   <div id="validationMessage"></div>
 
-  <script>document.getElementById('transferForm').addEventListener('submit', function(event) {
-    console.log("Form submitted"); // Check if the function is executed
-    event.preventDefault(); // Prevent default form submission
-    
-    // Fetch form values
-    const positionCode = document.getElementById('positionCode').value;
-    const phoneNumber = document.getElementById('phoneNumber').value;
-    const userDivision = document.getElementById('userDivision').value;
+  <script>
+    document.getElementById('transferForm').addEventListener('submit', function(event) {
+      console.log("Form submitted"); // Check if the function is executed
+      event.preventDefault(); // Prevent default form submission
+      
+      // Fetch form values
+      const yourBDECode = document.getElementById('yourBDECode').value;
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      const userDivision = document.getElementById('userDivision').value;
   
-    console.log("Position Code:", positionCode);
-    console.log("Phone Number:", phoneNumber);
-    console.log("User Division:", userDivision);
+      console.log("Your BDE Code:", yourBDECode);
+      console.log("Phone Number:", phoneNumber);
+      console.log("User Division:", userDivision);
   
+      // Define API payload based on user division
+      let apiPayload = {};
+      if (userDivision === 'CC') {
+        apiPayload = {
+          "divisioncode_c": "40",
+          "producthierarchycode_c": "4A",
+          "salesgroupcode_c": "401",
+          "phone": phoneNumber,
+          "account_id": null,
+          "lead_id": null
+        };
+      } else if (userDivision === 'MNT') {
+        apiPayload = {
+          "divisioncode_c": "30",
+          "producthierarchycode_c": "4A",
+          "salesgroupcode_c": "301",
+          "phone": phoneNumber,
+          "account_id": null,
+          "lead_id": null
+        };
+      } else if (userDivision === 'ROFF') {
+        apiPayload = {
+          "divisioncode_c": "40",
+          "producthierarchycode_c": "4A",
+          "salesgroupcode_c": "406",
+          "phone": phoneNumber,
+          "account_id": null,
+          "lead_id": null
+        };
+      } else if (userDivision === 'FV') {
+        apiPayload = {
+          "divisioncode_c": "10",
+          "producthierarchycode_c": "4A",
+          "salesgroupcode_c": "105",
+          "phone": phoneNumber,
+          "account_id": null,
+          "lead_id": null
+        };
+      } else {
+        showMessage('Please select a valid division');
+        return;
+      }
   
-  
-    // Define API payload based on user division
-    let apiPayload;
-    if (userDivision === 'CC') {
-      apiPayload = {
-        "divisioncode_c": "40",
-        "producthierarchycode_c": "4A",
-        "salesgroupcode_c": "401",
-        "phone": phoneNumber,
-        "account_id": null,
-        "lead_id": null
-      };
-    } else if (userDivision === 'MNT') {
-      apiPayload = {
-        "divisioncode_c": "30",
-        "producthierarchycode_c": "4A",
-        "salesgroupcode_c": "301",
-        "phone": phoneNumber,
-        "account_id": null,
-        "lead_id": null
-      };
-    } else if (userDivision === 'ROFF') {
-      apiPayload = {
-        "divisioncode_c": "40",
-        "producthierarchycode_c": "4A",
-        "salesgroupcode_c": "406",
-        "phone": phoneNumber,
-        "account_id": null,
-        "lead_id": null
-      };
-    } else if (userDivision === 'FV') {
-      apiPayload = {
-        "divisioncode_c": "10",
-        "producthierarchycode_c": "4A",
-        "salesgroupcode_c": "105",
-        "phone": phoneNumber,
-        "account_id": null,
-        "lead_id": null
-      };
-    } else {
-      showMessage('Please select a valid division');
-      return;
-    }
-  
-    // Make API request
-    console.log("API payload:", apiPayload);
-    fetch('https://pidilite-one-contractor-prod.herokuapp.com/apis/v.1.0/phone/validate/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(apiPayload)
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("API response:", data);
-      showMessage(data.message); // Display API response message
-    })
-    .catch(error => {
-      console.error("API request error:", error);
-      showMessage('An error occurred while processing your request'); // Display error message
+      // Make API request
+      console.log("API payload:", apiPayload);
+      fetch('https://pidilite-one-contractor-prod.herokuapp.com/apis/v.1.0/phone/validate/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(apiPayload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("API response:", data);
+        showMessage(data.message); // Display API response message
+      })
+      .catch(error => {
+        console.error("API request error:", error);
+        showMessage('An error occurred while processing your request'); // Display error message
+      });
     });
-  });
-  
-  function showMessage(message) {
-    document.getElementById('validationMessage').textContent = message;
-  }
-  
+    
+    function showMessage(message) {
+      document.getElementById('validationMessage').textContent = message;
+    }
   </script>
 </body>
 </html>
